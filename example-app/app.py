@@ -11,8 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import json
 import os
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, jsonify
 
 from flask_change_password import ChangePassword, ChangePasswordForm, SetPasswordForm
 
@@ -33,6 +34,36 @@ def page_changed(title):
     return render_template('changed.html', title=title)
 
 
+@app.route('/rules')
+def page_rules():
+    return render_template('rules.html', rules=json.dumps(flask_change_password.rules))
+
+
+@app.route('/get_rules')
+def get_rules():
+    return jsonify(flask_change_password.rules)
+
+
+def is_number(s):
+    try:
+        int(s)
+        return True
+    except ValueError:
+        return False
+
+
+@app.route('/set_rule/<name>/<value>')
+def set_rules(name, value):
+    rules = flask_change_password.rules
+    if value in ['true', 'false']:
+        value = value == 'true'
+    elif is_number(value):
+        value = int(value)
+    rules[name] = value
+    rules = flask_change_password.update_rules(rules)
+    return jsonify(rules)
+
+
 @app.route('/change_password', methods=['GET', 'POST'])
 def page_change_password():
     title = 'Change Password'
@@ -43,7 +74,7 @@ def page_change_password():
             return redirect(url_for('page_changed', title='changed'))
 
         return redirect(url_for('page_change_password'))
-    password_template = flask_change_password.change_password_template(form)
+    password_template = flask_change_password.change_password_template(form, submit_text='Change')
     return render_template('change_password.html', password_template=password_template, title=title, form=form,
                            user=dict(username='test.user'),
                            )
@@ -59,7 +90,7 @@ def page_create_password():
             return redirect(url_for('page_changed', title='created'))
 
         return redirect(url_for('page_create_password'))
-    password_template = flask_change_password.change_password_template(form)
+    password_template = flask_change_password.change_password_template(form, submit_text='Submit')
     return render_template('create_password.html', password_template=password_template, title=title, form=form,
                            user=dict(username='test.user'),
                            )

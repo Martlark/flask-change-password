@@ -11,44 +11,44 @@ class AppTestCase(unittest.TestCase):
 
     def test_length(self):
         result = self.change_password.valid_password('tiny')
-        assert 'length' in result, result
+        assert 'insufficient length' in result, result
 
     def test_uppercase(self):
         result = self.change_password.valid_password('alllowercase')
-        assert 'uppercase' in result, result
+        assert 'uppercase required' in result, result
 
     def test_lowercase(self):
         result = self.change_password.valid_password('ALLUPPERCASE')
-        assert 'lowercase' in result, result
+        assert 'lowercase required' in result, result
 
     def test_nonumbers(self):
         result = self.change_password.valid_password('NoNumbers')
-        assert 'numbers' in result
+        assert 'numbers required' in result
 
     def test_punctuation(self):
         result = self.change_password.valid_password('NoNumbers2')
-        assert 'punctuation' in result
+        assert 'punctuation required' in result
 
     def test_diff_username(self):
         result = self.change_password.valid_password('NoNumbers2!', username='Numbers')
-        assert 'difference from username' in result
+        assert 'insufficient difference from username' in result
 
     def test_simple_passwords(self):
         # has inside
         result = self.change_password.valid_password('jjrudeboyAy2!', username='Numbers')
-        assert 'difference from known simple password: rudeboy' in result, result
+        assert 'too similar to common password: rudeboy' in result, result
         # has inside but password longer than 2 x known bad password
         result = self.change_password.valid_password('jj--iuerudeboyAy2!', username='Numbers')
         assert 5 == result, result
         # starts with
         result = self.change_password.valid_password('monkey9054343hyAy2!', username='Numbers')
-        assert 'difference from known simple password: monkey' in result, result
+        assert 'too similar to common password: monkey' in result, result
 
     def test_123(self):
         result = self.change_password.valid_password('ru%d*eboyAy123!', username='Numbers')
-        assert 'number complexity, 123 disallowed' in result
+        assert 'not enough number complexity, 123 disallowed' in result
         result = self.change_password.valid_password('ru!d%eboyAy789!', username='Numbers')
-        assert 'number complexity, 789 disallowed' in result
+        assert 'not enough number complexity, 789 disallowed' in result
 
     def test_wxyz(self):
         test_password = 'ru@de%boyAy432wxyz'
@@ -58,10 +58,10 @@ class AppTestCase(unittest.TestCase):
         self.change_password.update_rules(dict(alphabet_sequence=True))
 
         result = self.change_password.valid_password(test_password, username='Numbers')
-        assert 'complexity, wxyz disallowed' in result, result
+        assert 'insufficient letter complexity, wxyz disallowed' in result, result
 
         result = self.change_password.valid_password('ru%d$eboyAy432WXYZ!', username='Numbers')
-        assert 'complexity, wxyz disallowed' in result, result
+        assert 'insufficient letter complexity, wxyz disallowed' in result, result
 
     def test_pwned(self):
         rules = self.change_password.rules
@@ -73,7 +73,7 @@ class AppTestCase(unittest.TestCase):
         # known pwned password
         test_password = 'monkey'
         result = self.change_password.valid_password(test_password, username='Numbers')
-        assert 'difference from known passwords' in result, result
+        assert 'is a known hacked password' in result, result
         # this should not be pwned
         test_password = '1F6A4068DC0A7ADA930C555C3CE5B35445C:1; 1F7AD9E67E4437D507D2E8E50951889E605:2; 1FA5A0CA12BE10:1'
         result = self.change_password.valid_password(test_password, username='Numbers')
@@ -87,9 +87,9 @@ class AppTestCase(unittest.TestCase):
         self.change_password.update_rules(dict(keyboard_sequence=True))
 
         result = self.change_password.valid_password('rud$e^boyAy432qwerty!', username='Numbers')
-        assert 'complexity, qwer disallowed' in result, result
+        assert 'keyboard sequence found, qwer disallowed' in result, result
         result = self.change_password.valid_password('r!judeboyAy432QWERTY!', username='Numbers')
-        assert 'complexity, qwer disallowed' in result, result
+        assert 'keyboard sequence found, qwer disallowed' in result, result
 
     def test_long_enough_to_pass_with_bad_stuff(self):
         result = self.change_password.valid_password('monkeyNumbers.rudeboyAy2123!', username='Numbers')

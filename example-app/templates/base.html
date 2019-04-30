@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Example App</title>
+    <script src="https://unpkg.com/tko/dist/tko.es6.min.js"></script>
     <style>
         .form {
             margin: 1em;
@@ -35,6 +36,10 @@
 
 </head>
 <body>
+<ul>
+    <li><a href="{{ url_for('page_index') }}">home</a></li>
+    <li><a href="{{ url_for('page_rules') }}">rules</a></li>
+</ul>
 {% block app_content %}{% endblock %}
 
 </body>

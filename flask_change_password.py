@@ -45,11 +45,12 @@ class ChangePassword:
     def update_rules(self, rules=None):
         self.rules.update(rules or {})
         self.min_password_length = self.rules['min_password_length']
+        return self.rules
 
-    def change_password_template(self, form):
+    def change_password_template(self, form, submit_text=''):
         with open(os.path.join(self.base_dir, 'change_password_template.html')) as f:
             text = f.read()
-        return render_template_string(text, form=form, rules_text=self.get_rules_text())
+        return render_template_string(text, form=form, rules_text=self.get_rules_text(), submit_text=submit_text)
 
     def route_change_password_static(self, filename):
         return send_from_directory(self.base_dir, filename)
@@ -142,7 +143,7 @@ class ChangePassword:
         """
         score = 0
         if len(password) < self.rules['min_password_length']:
-            raise Exception('length.  Required {}'.format(self.rules['min_password_length']))
+            raise Exception('insufficient length.  Required {}'.format(self.rules['min_password_length']))
 
         if self.rules['long_password_override'] > 1 and len(password) > self.rules['long_password_override'] * \
                 self.rules['min_password_length']:
@@ -150,15 +151,15 @@ class ChangePassword:
 
         # only apply these tests if password is of 'middling length'
         if self.rules['uppercase'] and not re.search(r'[A-Z]', password):
-            raise Exception('uppercase')
+            raise Exception('uppercase required')
         score += 1
 
         if self.rules['lowercase'] and not re.search(r'[a-z]', password):
-            raise Exception('lowercase')
+            raise Exception('lowercase required')
         score += 1
 
         if self.rules['numbers'] and not re.search(r'[0-9]', password):
-            raise Exception('numbers')
+            raise Exception('numbers required')
         score += 1
 
         if self.rules['punctuation']:
@@ -168,25 +169,25 @@ class ChangePassword:
                     punctuation += 1
 
             if punctuation == 0:
-                raise Exception('punctuation')
+                raise Exception('punctuation required')
         score += 1
 
         if self.rules['username'] and len(username) > 0 and username.lower() in password.lower():
-            raise Exception('difference from username')
+            raise Exception('insufficient difference from username')
 
         if self.rules['number_sequence']:
             sequence_length = 3
             for x in range(11 - sequence_length):
                 consecutive_sequence = ''.join([str(y) for y in range(x, x + sequence_length)])
                 if consecutive_sequence in password:
-                    raise Exception('number complexity, {} disallowed'.format(consecutive_sequence))
+                    raise Exception('not enough number complexity, {} disallowed'.format(consecutive_sequence))
 
         if self.rules['alphabet_sequence']:
             sequence_length = 4
             for x in range(len(string.ascii_letters) - sequence_length):
                 consecutive_sequence = ''.join([string.ascii_letters[y] for y in range(x, x + sequence_length)])
                 if consecutive_sequence in password.lower():
-                    raise Exception('complexity, {} disallowed'.format(consecutive_sequence))
+                    raise Exception('insufficient letter complexity, {} disallowed'.format(consecutive_sequence))
 
         if self.rules['keyboard_sequence']:
             keyboard = 'qwertyuiopasdfghjklzxcvbnm'
@@ -194,7 +195,7 @@ class ChangePassword:
             for x in range(len(keyboard) - sequence_length):
                 consecutive_sequence = ''.join([keyboard[y] for y in range(x, x + sequence_length)])
                 if consecutive_sequence in password.lower():
-                    raise Exception('complexity, {} disallowed'.format(consecutive_sequence))
+                    raise Exception('keyboard sequence found, {} disallowed'.format(consecutive_sequence))
 
         if self.rules['passwords']:
             with open(os.path.join(self.base_dir, '10_million_password_list_top_10000.txt')) as f:
@@ -202,7 +203,7 @@ class ChangePassword:
                     known_password = line.strip()
                     if password.startswith(known_password) or len(known_password) * 2 > len(
                             password) and known_password in password:
-                        raise Exception('difference from known simple password: {}'.format(known_password))
+                        raise Exception('too similar to common password: {}'.format(known_password))
         score += 1
 
         if self.rules['pwned']:
@@ -227,13 +228,13 @@ class ChangePassword:
         if response.status_code == 200:
             search_space = response.content.decode('utf-8')
             if hash_search_string in search_space:
-                raise Exception('difference from known passwords')
+                raise Exception('is a known hacked password')
 
     def verify_password_change_form(self, form):
         try:
             self.password_good_enough(form.password.data, form.username.data)
         except Exception as e:
-            flash('Insufficient' + str(e))
+            flash(str(e))
             return False
 
         if form.password.data != form.password2.data:
@@ -274,7 +275,7 @@ class ChangePasswordForm(FlaskForm):
     password2 = PasswordField(
         'Repeat New Password', validators=[DataRequired(), EqualTo('password')],
         render_kw={'data-bind': 'textInput: password2', 'required': 'required'})
-    submit = SubmitField('Change Password', render_kw={'data-bind': 'visible: verified()'})
+    submit = SubmitField('Submit', render_kw={'data-bind': 'visible: verified()'})
 
 
 class SetPasswordForm(FlaskForm):
@@ -287,4 +288,4 @@ class SetPasswordForm(FlaskForm):
     password2 = PasswordField(
         'Repeat New Password', validators=[DataRequired(), EqualTo('password')],
         render_kw={'data-bind': 'textInput: password2', 'required': 'required'})
-    submit = SubmitField('Change Password', render_kw={'data-bind': 'visible: verified()'})
+    submit = SubmitField('Submit', render_kw={'data-bind': 'visible: verified()'})

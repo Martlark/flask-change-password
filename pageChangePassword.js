@@ -36,7 +36,7 @@ class FlaskChangePasswordViewModel {
             passwordNotDifferentFomCurrentPassword: "password not different from current password",
             moreCharactersRequired: "more characters required",
             passwordsDoNotMatch: "passwords do not match",
-            insufficient: "insufficient",
+            insufficient: "",
         };
     }
 
@@ -172,7 +172,7 @@ class FlaskChangePasswordViewModel {
                     body: data,
                 }).then(result => result.text()).then(result => {
                 if (isNaN(result)) {
-                    this.password1Message(this.messages.insufficient + " " + result);
+                    this.password1Message(result);
                     this.password1Strength(0);
                 } else {
                     this.password1Strength(Number(result));
@@ -190,5 +190,6 @@ class FlaskChangePasswordViewModel {
 
 document.addEventListener("DOMContentLoaded", (event) => {
     new FlaskChangePasswordViewModel();
+
 });
 

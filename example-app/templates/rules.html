@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <div>
+        <h1>Test Rules</h1>
+        <h3>Current Rules</h3>
+        <p>{{ rules }}</p>
+        <label>Punctuation<input type="checkbox" data-bind="checked: punctuation"></label>
+        <label>uppercase<input type="checkbox" data-bind="checked: uppercase"></label>
+        <label>lowercase<input type="checkbox" data-bind="checked: lowercase"></label>
+        <label>Number Sequence<input type="checkbox" data-bind="checked: number_sequence"></label>
+        <label>username<input type="checkbox" data-bind="checked: username"></label>
+        <label>numbers<input type="checkbox" data-bind="checked: numbers"></label>
+        <label>passwords<input type="checkbox" data-bind="checked: passwords"></label>
+        <label>keyboard_sequence<input type="checkbox" data-bind="checked: keyboard_sequence"></label>
+        <label>alphabet_sequence<input type="checkbox" data-bind="checked: alphabet_sequence"></label>
+        <label>long_password_override<input type="number" data-bind="textInput: long_password_override"></label>
+        <label>pwned<input type="checkbox" data-bind="checked: pwned"></label>
+        <label>Min length<input type="number" data-bind="textInput: min_password_length"></label>
+    </div>
+    <input type="hidden" value="{{ rules }}" name="rules">
+    <script src="/static/view.js"></script>
+{% endblock %}
