@@ -1,4 +1,4 @@
-class ViewModel {
+class FlaskChangePasswordViewModel {
     constructor() {
         this.tickCharacter = "&#10003;";
         this.message = ko.observable("");
@@ -41,7 +41,10 @@ class ViewModel {
     }
 
     getInputValue(inputName) {
-        return document.getElementsByName(inputName)[0].value;
+        const elements = document.getElementsByName(inputName);
+        if (elements.length > 0)
+            return elements[0].value;
+        return ''
     }
 
     intervalHandler() {
@@ -112,8 +115,10 @@ class ViewModel {
     }
 
     addMessageSpans() {
-        this.insertAfterByName(["<span class='alert-danger' data-bind='text:old_passwordMessage'></span>", "<span>&nbsp;</span>"], "old_password");
-        this.insertAfterByName(["<span class='alert-success' data-bind='html:old_passwordMessageOK'></span>", "<span>&nbsp;</span>"], "old_password");
+        if (this.changing()) {
+            this.insertAfterByName(["<span class='alert-danger' data-bind='text:old_passwordMessage'></span>", "<span>&nbsp;</span>"], "old_password");
+            this.insertAfterByName(["<span class='alert-success' data-bind='html:old_passwordMessageOK'></span>", "<span>&nbsp;</span>"], "old_password");
+        }
         this.insertAfterByName(["<span class='alert-danger' data-bind='text:password1Message'></span>"], "password");
         this.insertAfterByName(["<span class='alert-success' data-bind='html:password1MessageOK'></span>", "<span>&nbsp;</span>"], "password");
         this.insertAfterByName(["<span class='alert-danger' data-bind='text:password2Message'></span>"], "password2");
@@ -183,8 +188,7 @@ class ViewModel {
 
 }
 
-let viewModel = null;
 document.addEventListener("DOMContentLoaded", (event) => {
-    viewModel = new ViewModel();
+    new FlaskChangePasswordViewModel();
 });
 

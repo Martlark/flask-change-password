@@ -4,3 +4,4 @@ build/
 dist/
 flask_change_password.egg-info/
 venv/
+example-app/example-app-venv36

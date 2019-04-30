@@ -122,7 +122,7 @@ class ChangePassword:
             rules_text += ''' Cannot include keyboard letter sequences.'''
         if self.rules['alphabet_sequence']:
             rules_text += ''' Cannot include alphabetic sequences.'''
-        if self.rules['pwnd']:
+        if self.rules['pwned']:
             rules_text += ''' Cannot be a pwned password.'''
         if self.rules['passwords']:
             rules_text += ''' Cannot be like a common password.'''
