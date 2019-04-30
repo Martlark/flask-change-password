@@ -1,0 +1,4 @@
+include 10_million_passwords_list_top_10000.txt
+include change_password_template.py
+include pageChangePassword.js
+
