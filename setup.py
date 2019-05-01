@@ -21,7 +21,7 @@ long_description = open('README.rst', 'r', encoding='utf-8').read()
 setup(
     name='flask-change-password',
 
-    version='0.0.1',
+    version='0.0.2',
 
     description='password change page for Flask.',
     long_description=open('README.rst', 'r', encoding='utf-8').read(),

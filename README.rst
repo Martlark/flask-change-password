@@ -1,5 +1,5 @@
 Flask-change-password: Feature rich change password page
-=========================================
+========================================================
 
 |PyPI Version|
 
@@ -24,11 +24,13 @@ After installing, wrap your Flask app with an ``IpBan``, or call ip_ban.init_app
 .. code:: python
 
     from flask import Flask
-    from flask_ipban import IpBan
+    from flask_change_password import ChangePassword, ChangePasswordForm, SetPasswordForm
 
     app = Flask(__name__)
-    ip_ban = IpBan(ban_seconds=200)
-    ip_ban.init_app(app)
+
+    app.secret_key = os.urandom(20)
+    flask_change_password = ChangePassword(min_password_length=10, rules=dict(long_password_override=2))
+    flask_change_password.init_app(app)
 
 
 The repository includes a small example application.
@@ -36,78 +38,85 @@ The repository includes a small example application.
 Options
 -------
 
--  ``app``,  Flask application to monitor.  Use ip_ban.init_app(app) to intialise later on.
+-  ``app``,  Flask application.  Use init_app(app) to intialise later on.
 
 Methods
 -------
 
--  ``init_app(app)`` - Initialise and start ip_ban with the given Flask application.
+-  ``init_app(app)`` - Initialise and start with the given Flask application.
+-  ``change_password_template(form, submit_text=None)``` - Format and return a
+     fragment of HTML that implements the change/set password form.  form is the
+     required password operation form. submit_text is the text to show on the submit
+     button.  Default is 'submit'
 
-Example for add:
+Adding the form to a page
+-------------------------
 
-.. code:: python
-
-    from flask import Flask
-    from flask_ipban import IpBan
-
-    app = Flask(__name__)
-    ip_ban = IpBan(app)
-
-    @route('/login', methods=['GET','POST']
-    def login:
-        # ....
-        # increment block if wrong passwords to prevent password stuffing
-        # ....
-        if request.method == 'POST':
-            if request.arg.get('password') != 'secret':
-                ip_ban.add(reason='bad password')
-
--  ``remove(ip_address)`` - remove the given ip address from the ban list.  Returns true if ban removed.
--  ``url_pattern_add('reg-ex-pattern', match_type='regex')`` - exclude any url matching the pattern from checking
-
-
-Example of url_pattern_add:
+Call as follows:
 
 .. code:: python
 
-    from flask import Flask
-    from flask_ipban import IpBan
+    render_template('change_password.html', password_template=password_template, title=title, form=form,
+                               user=dict(username='test.user'),
+                               )
 
-    app = Flask(__name__)
-    ip_ban = IpBan(app)
-    ip_ban.url_pattern_add('^/whitelist$', match_type='regex')
-    ip_ban.url_pattern_add('/flash/dance', match_type='string')
+And include the template using the jinja2 `safe` pipe.
 
+.. code:: html
+    {% extends "base.html" %}
 
--  ``url_pattern_remove('reg-ex-pattern')`` - remove pattern from the url whitelist
--  ``url_block_pattern_add('reg-ex-pattern', match_type='regex')`` - add any url matching the pattern to the block list. match_type can be 'string' or 'regex'.  String is direct match.  Regex is a regex pattern.
--  ``url_block_pattern_remove('reg-ex-pattern')`` - remove pattern from the url block list
--  ``ip_whitelist_add('ip-address')`` - exclude the given ip from checking
--  ``ip_whitelist_remove('ip-address')`` - remove the given ip from the ip whitelist
-
-
-Example of ip_whitelist_add
-
-.. code:: python
-
-    from flask import Flask
-    from flask_ipban import IpBan
-
-    app = Flask(__name__)
-    ip_ban = IpBan(app)
-    ip_ban.whitelist_add('127.0.0.1')
+    {% block app_content %}
+        <h1>Test Change Password</h1>
+        {{ password_template|safe }}
+    {% endblock %}
 
 
--  ``load_nuisances(file_name=None)`` - add a list of nuisances to url pattern block list from a file.  See below for more information.
+Change Password
+---------------
 
-Example:
+Example of calling the change password form.
 
 .. code:: python
 
-    ip_ban = IpBan()
-    app = Flask(__name__)
-    ip_ban.init_app(app)
-    ip_ban.load_nuisances()
+    @app.route('/change_password', methods=['GET', 'POST'])
+    def page_change_password():
+        title = 'Change Password'
+        form = ChangePasswordForm(username='test.user', changing=True, title=title)
+        if form.validate_on_submit():
+            valid = flask_change_password.verify_password_change_form(form)
+            if valid:
+                return redirect(url_for('page_changed', title='changed', new_password=form.password.data))
+
+            return redirect(url_for('page_change_password'))
+        password_template = flask_change_password.change_password_template(form, submit_text='Change')
+        return render_template('change_password.html', password_template=password_template, title=title, form=form,
+                               user=dict(username='test.user'),
+                               )
+
+Create Password
+---------------
+
+Example of calling the create password form.  Use the SetPasswordForm class.
+
+.. code:: python
+
+    @app.route('/create_password', methods=['GET', 'POST'])
+    def page_create_password():
+        title = 'Create Password'
+        form = SetPasswordForm(username='test.user', title=title)
+        if form.validate_on_submit():
+            valid = flask_change_password.verify_password_change_form(form)
+            if valid:
+                return redirect(url_for('page_changed', title='created', new_password=form.password.data))
+
+            return redirect(url_for('page_create_password'))
+        password_template = flask_change_password.change_password_template(form, submit_text='Submit')
+        return render_template('create_password.html', password_template=password_template, title=title, form=form,
+                               user=dict(username='test.user'),
+                               )
+
+
+
 
 Licensing
 ---------
