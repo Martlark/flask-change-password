@@ -3,8 +3,8 @@ Flask-change-password: Feature rich change password page
 
 |PyPI Version|
 
-Flask-change-password is a Flask extension implements a create and change password pages that can
-easily be integrate with a Flask application.
+Flask-change-password is a Flask extension that implements create and change
+password pages that can easily be integrated with a Flask application.
 
 Features
 --------
@@ -19,7 +19,9 @@ Install via `pip <https://pypi.python.org/pypi/pip>`_:
 
     pip install flask-change-password
 
-After installing, wrap your Flask app with an ``IpBan``, or call ip_ban.init_app(app):
+After installing, wrap your Flask app with an ``ChangePassword``, or call init_app(app).
+
+Example:
 
 .. code:: python
 
@@ -46,7 +48,7 @@ Methods
 -------
 
 -  ``init_app(app)`` - Initialise and start with the given Flask application.
--  ``change_password_template(form, submit_text=None)``` - Format and return a
+-  ``change_password_template(form, submit_text=None)`` - Format and return a
      fragment of HTML that implements the change/set password form.  form is the
      required password operation form. submit_text is the text to show on the submit
      button.  Default is 'submit'
@@ -54,11 +56,11 @@ Methods
 Adding the form to a page
 -------------------------
 
-Call as follows:
+Call as follows in your Flask application route:
 
 .. code:: python
 
-    render_template('change_password.html', password_template=password_template, title=title, form=form,
+    return render_template('change_password.html', password_template=password_template, title=title, form=form,
                                user=dict(username='test.user'),
                                )
 

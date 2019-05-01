@@ -20,10 +20,10 @@ pip install twine
 
 python3 setup.py sdist bdist_wheel
 #
-twine check dist/flask-change-password-0.0.2*
+twine check dist/flask-change-password-0.0.4*
 # test
 # pip install -e .
 # twine upload --repository-url https://test.pypi.org/legacy/ dist/* -u martlark
 # prod pypi
 # add release in git hub to match the version
-twine upload dist/flask-change-password-0.0.2* -u martlark
+twine upload dist/flask-change-password-0.0.4* -u martlark

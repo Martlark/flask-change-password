@@ -21,14 +21,14 @@ long_description = open('README.rst', 'r', encoding='utf-8').read()
 setup(
     name='flask-change-password',
 
-    version='0.0.2',
+    version='0.0.4',
 
-    description='password change page for Flask.',
+    description='password change and set pages for Flask.',
     long_description=open('README.rst', 'r', encoding='utf-8').read(),
     long_description_content_type='text/x-rst',
 
     url='https://github.com/Martlark/flask-change-password',
-    download_url='https://github.com/Martlark/flask-change-password/archive/0.0.1.tar.gz',
+    download_url='https://github.com/Martlark/flask-change-password/archive/0.0.4.tar.gz',
 
     author='Andrew Rowe',
     author_email='rowe.andrew.d@gmail.com',
