@@ -35,6 +35,8 @@ After installing, wrap your Flask app with an ``IpBan``, or call ip_ban.init_app
 
 The repository includes a small example application.
 
+NOTE: This extension uses KnockoutJS for the page view controller and will call the JS from a CDN.
+
 Options
 -------
 
@@ -63,6 +65,7 @@ Call as follows:
 And include the template using the jinja2 `safe` pipe.
 
 .. code:: html
+
     {% extends "base.html" %}
 
     {% block app_content %}
