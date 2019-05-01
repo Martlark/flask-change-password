@@ -35,14 +35,14 @@ Example:
     flask_change_password.init_app(app)
 
 
-The repository includes a small example application.
+The GitHub repository includes a small example application which shows how to use in an application.
 
 NOTE: This extension uses KnockoutJS for the page view controller and will call the JS from a CDN.
 
 Options
 -------
 
--  ``app``,  Flask application.  Use init_app(app) to intialise later on.
+-  ``app``,  Flask application.  Use init_app(app) to initialise later on.
 
 Methods
 -------
