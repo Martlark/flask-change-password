@@ -20,7 +20,7 @@ class ChangePassword:
         self.rules = {'punctuation': True, 'uppercase': True, 'lowercase': True, 'number_sequence': True,
                       'username': True, 'numbers': True, 'username_length': 0, 'username_requires_separators': False,
                       'passwords': True, 'keyboard_sequence': False, 'alphabet_sequence': False,
-                      'long_password_override': 0, 'pwned': True, 'show_hide_passwords': True}
+                      'long_password_override': 0, 'pwned': True, 'show_hide_passwords': True, 'flash': True}
         self.update_rules(dict(min_password_length=min_password_length))
         self.update_rules(rules or {})
 
@@ -234,20 +234,20 @@ class ChangePassword:
         try:
             self.password_good_enough(form.password.data, form.username.data)
         except Exception as e:
-            flash(str(e))
+            if self.rules.get('flash'):
+                flash(str(e))
             return False
 
         if form.password.data != form.password2.data:
-            flash('Password and repeat password not the same')
+            if self.rules.get('flash'):
+                flash('Password and repeat password not the same')
             return False
 
         if hasattr(form, 'old_password'):
-            if len(form.old_password.data) < self.rules['min_password_length']:
-                flash('Current password too short')
-                return False
-
             if form.old_password.data == form.password2.data:
-                flash('Current password and new password must be different')
+                if self.rules.get('flash'):
+                    flash('Current password and new password must be different')
+
                 return False
 
         return True
@@ -255,10 +255,14 @@ class ChangePassword:
     def verify_password_set_form(self, form):
         valid = True
         if form.password.data != form.password2.data:
-            flash('Password and repeat password not the same')
+            if self.rules.get('flash'):
+                flash('Password and repeat password not the same')
+
             valid = False
         elif len(form.password.data) < self.rules['min_password_length']:
-            flash('Password too short')
+            if self.rules.get('flash'):
+                flash('Password too short')
+
             valid = False
         return valid
 
