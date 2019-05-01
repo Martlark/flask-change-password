@@ -1,0 +1,35 @@
+#menu a {
+    padding: 5px;
+}
+
+#menu li {
+    display: inline;
+}
+
+.form {
+    margin: 1em;
+}
+
+.alert-danger {
+    color: red;
+}
+
+.alert-success {
+    color: greenyellow;
+    font-weight: bold;
+}
+
+.form input {
+    width: 40%;
+    margin-bottom: 1em;
+}
+
+
+.form input[type=submit] {
+    width: 10em;
+}
+
+
+.control-label {
+    display: block;
+}

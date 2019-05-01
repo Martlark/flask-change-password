@@ -2,5 +2,6 @@
 
 {% block app_content %}
     <h1>Password {{ title }}</h1>
-    <a href="{{ url_for('page_index') }}">Home</a>
+    <h3>New password is:</h3>
+    <p>{{ new_password }}</p>
 {% endblock %}

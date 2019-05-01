@@ -20,7 +20,7 @@ class ChangePassword:
         self.rules = {'punctuation': True, 'uppercase': True, 'lowercase': True, 'number_sequence': True,
                       'username': True, 'numbers': True, 'username_length': 0, 'username_requires_separators': False,
                       'passwords': True, 'keyboard_sequence': False, 'alphabet_sequence': False,
-                      'long_password_override': 0, 'pwned': True}
+                      'long_password_override': 0, 'pwned': True, 'show_hide_passwords': True}
         self.update_rules(dict(min_password_length=min_password_length))
         self.update_rules(rules or {})
 

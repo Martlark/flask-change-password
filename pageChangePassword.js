@@ -14,12 +14,16 @@ class FlaskChangePasswordViewModel {
         this.password2MessageOK = ko.observable("");
         this.old_passwordMessage = ko.observable("");
         this.minPasswordCheckLength = Number(this.getInputValue("password_length"));
+        this.showHidePassword = ko.observable(true);
+        this.rules = {};
 
-        if (Number(this.minPasswordCheckLength) <= 0) {
-            fetch('/flask_change_password/get_rules').then(result => result.json()).then(result =>
-                this.minPasswordCheckLength = Number(result.min_password_length)
-            );
-        }
+        fetch('/flask_change_password/get_rules').then(result => result.json()).then(result => {
+            this.rules = result;
+            if (Number(this.minPasswordCheckLength) <= 0) {
+                this.minPasswordCheckLength = Number(this.rules.min_password_length)
+            }
+            this.showHidePassword(this.rules.show_hide_password)
+        });
         this.addMessageSpans();
         this.previous = {};
         this.old_passwordMessage.subscribe(newValue => this.old_passwordCheck());
@@ -186,7 +190,30 @@ class FlaskChangePasswordViewModel {
         return false;
     }
 
+    clickToggleShowPassword(view, evt) {
+        if (this.showHidePassword()) {
+            const label = evt.currentTarget;
+            const input = document.getElementById(label.htmlFor);
+            if (input.type === "password") {
+                input.type = "text";
+            } else {
+                input.type = "password";
+            }
+        }
+    }
 }
+
+//let KO know that we will take care of managing the bindings of our children
+
+ko.bindingHandlers.stopBinding = {
+    init: function () {
+        return {controlsDescendantBindings: true};
+    }
+};
+
+//KO 2.1, now allows you to add containerless support for custom bindings
+ko.virtualElements.allowedBindings.stopBinding = true;
+
 
 document.addEventListener("DOMContentLoaded", (event) => {
     new FlaskChangePasswordViewModel();

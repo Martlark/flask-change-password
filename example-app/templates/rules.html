@@ -2,22 +2,27 @@
 
 {% block app_content %}
     <div>
-        <h1>Test Rules</h1>
+        <h1>Change Password Rules</h1>
         <h3>Current Rules</h3>
         <p>{{ rules }}</p>
-        <label>Punctuation<input type="checkbox" data-bind="checked: punctuation"></label>
-        <label>uppercase<input type="checkbox" data-bind="checked: uppercase"></label>
-        <label>lowercase<input type="checkbox" data-bind="checked: lowercase"></label>
-        <label>Number Sequence<input type="checkbox" data-bind="checked: number_sequence"></label>
-        <label>username<input type="checkbox" data-bind="checked: username"></label>
-        <label>numbers<input type="checkbox" data-bind="checked: numbers"></label>
-        <label>passwords<input type="checkbox" data-bind="checked: passwords"></label>
-        <label>keyboard_sequence<input type="checkbox" data-bind="checked: keyboard_sequence"></label>
-        <label>alphabet_sequence<input type="checkbox" data-bind="checked: alphabet_sequence"></label>
-        <label>long_password_override<input type="number" data-bind="textInput: long_password_override"></label>
-        <label>pwned<input type="checkbox" data-bind="checked: pwned"></label>
-        <label>Min length<input type="number" data-bind="textInput: min_password_length"></label>
+        <label>punctuation<input type="checkbox" data-bind="checked: punctuation"></label><br>
+        <label>uppercase<input type="checkbox" data-bind="checked: uppercase"></label><br>
+        <label>lowercase<input type="checkbox" data-bind="checked: lowercase"></label><br>
+        <label>number_sequence<input type="checkbox" data-bind="checked: number_sequence"></label><br>
+        <label>username<input type="checkbox" data-bind="checked: username"></label><br>
+        <label>numbers<input type="checkbox" data-bind="checked: numbers"></label><br>
+        <label>passwords<input type="checkbox" data-bind="checked: passwords"></label><br>
+        <label>keyboard_sequence<input type="checkbox" data-bind="checked: keyboard_sequence"></label><br>
+        <label>alphabet_sequence<input type="checkbox" data-bind="checked: alphabet_sequence"></label><br>
+        <label>long_password_override<input type="number" data-bind="textInput: long_password_override"></label><br>
+        <label>pwned<input type="checkbox" data-bind="checked: pwned"></label><br>
+        <label>min_password_length<input type="number" data-bind="textInput: min_password_length"></label><br>
+        <label>username_length<input type="number" data-bind="textInput: username_length"></label><br>
+        <label>show_hide_password<input type="checkbox" data-bind="checked: show_hide_password"></label><br>
+        <hr>
+        <h3>New Rules</h3>
+        <p data-bind="text: newRules"></p>
     </div>
     <input type="hidden" value="{{ rules }}" name="rules">
-    <script src="/static/view.js"></script>
+    <script src="{{ url_for('static', filename='rulesView.js') }}"></script>
 {% endblock %}

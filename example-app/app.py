@@ -13,7 +13,7 @@
 # limitations under the License.
 import json
 import os
-from flask import Flask, render_template, redirect, url_for, jsonify
+from flask import Flask, render_template, redirect, url_for, jsonify, request
 
 from flask_change_password import ChangePassword, ChangePasswordForm, SetPasswordForm
 
@@ -29,9 +29,9 @@ def page_index():
     return render_template('index.html')
 
 
-@app.route('/changed/<title>')
-def page_changed(title):
-    return render_template('changed.html', title=title)
+@app.route('/changed/<title>/<new_password>')
+def page_changed(title, new_password=''):
+    return render_template('changed.html', title=title, new_password=new_password)
 
 
 @app.route('/rules')
@@ -71,7 +71,7 @@ def page_change_password():
     if form.validate_on_submit():
         valid = flask_change_password.verify_password_change_form(form)
         if valid:
-            return redirect(url_for('page_changed', title='changed'))
+            return redirect(url_for('page_changed', title='changed', new_password=form.password.data))
 
         return redirect(url_for('page_change_password'))
     password_template = flask_change_password.change_password_template(form, submit_text='Change')
@@ -87,7 +87,7 @@ def page_create_password():
     if form.validate_on_submit():
         valid = flask_change_password.verify_password_change_form(form)
         if valid:
-            return redirect(url_for('page_changed', title='created'))
+            return redirect(url_for('page_changed', title='created', new_password=form.password.data))
 
         return redirect(url_for('page_create_password'))
     password_template = flask_change_password.change_password_template(form, submit_text='Submit')
