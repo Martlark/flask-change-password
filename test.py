@@ -15,23 +15,43 @@ class AppTestCase(unittest.TestCase):
 
     def test_uppercase(self):
         result = self.change_password.valid_password('alllowercase')
-        assert 'uppercase required' in result, result
+        assert '1 uppercase required' in result, result
+        rules = self.change_password.rules
+        self.change_password.update_rules(dict(uppercase=22))
+        result = self.change_password.valid_password('alllowercase')
+        assert '22 uppercase required' in result, result
+        self.change_password.update_rules(rules)
 
     def test_lowercase(self):
         result = self.change_password.valid_password('ALLUPPERCASE')
-        assert 'lowercase required' in result, result
+        assert '1 lowercase required' in result, result
+        rules = self.change_password.rules
+        self.change_password.update_rules(dict(lowercase=20))
+        result = self.change_password.valid_password('ALLUPPERCASE')
+        assert '20 lowercase required' in result, result
+        self.change_password.update_rules(rules)
 
     def test_nonumbers(self):
         result = self.change_password.valid_password('NoNumbers')
-        assert 'numbers required' in result
+        assert '1 number required' in result, result
+        rules = self.change_password.rules
+        self.change_password.update_rules(dict(numbers=2))
+        result = self.change_password.valid_password('NoNumbers')
+        assert '2 numbers required' in result, result
+        self.change_password.update_rules(rules)
 
     def test_punctuation(self):
         result = self.change_password.valid_password('NoNumbers2')
-        assert 'punctuation required' in result
+        assert '1 punctuation required' in result, result
+        rules = self.change_password.rules
+        self.change_password.update_rules(dict(punctuation=2))
+        result = self.change_password.valid_password('NoNumbers2')
+        assert '2 punctuations required' in result, result
+        self.change_password.update_rules(rules)
 
     def test_diff_username(self):
         result = self.change_password.valid_password('NoNumbers2!', username='Numbers')
-        assert 'insufficient difference from username' in result
+        assert 'insufficient difference from username' in result, result
 
     def test_simple_passwords(self):
         # has inside
@@ -66,8 +86,8 @@ class AppTestCase(unittest.TestCase):
     def test_pwned(self):
         rules = self.change_password.rules
         self.change_password.update_rules(
-            {'punctuation': False, 'uppercase': False, 'lowercase': False, 'number_sequence': False,
-             'username': False, 'numbers': False, 'username_length': 0, 'username_requires_separators': False,
+            {'punctuation': 0, 'uppercase': 0, 'lowercase': 0, 'number_sequence': False,
+             'username': False, 'numbers': 0, 'username_length': 0, 'username_requires_separators': False,
              'passwords': False, 'keyboard_sequence': False, 'alphabet_sequence': False,
              'long_password_override': 0, 'pwned': True, 'min_password_length': 0})
         # known pwned password
@@ -93,7 +113,7 @@ class AppTestCase(unittest.TestCase):
 
     def test_long_enough_to_pass_with_bad_stuff(self):
         result = self.change_password.valid_password('monkeyNumbers.rudeboyAy2123!', username='Numbers')
-        assert result == 'difference from username', result
+        assert result == 'insufficient difference from username', result
         self.change_password.update_rules(dict(min_password_length=10, long_password_override=2))
         result = self.change_password.valid_password('monkeyNumbers.rudeboyAy2123!', username='Numbers')
         assert result == 5, result

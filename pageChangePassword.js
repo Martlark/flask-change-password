@@ -22,7 +22,7 @@ class FlaskChangePasswordViewModel {
             if (Number(this.minPasswordCheckLength) <= 0) {
                 this.minPasswordCheckLength = Number(this.rules.min_password_length)
             }
-            this.showHidePassword(this.rules.show_hide_password)
+            this.showHidePassword(this.rules.show_hide_passwords)
         });
         this.addMessageSpans();
         this.previous = {};

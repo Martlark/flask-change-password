@@ -37,21 +37,65 @@ Example:
 
 The GitHub repository includes a small example application which shows how to use in an application.
 
-NOTE: This extension uses KnockoutJS for the page view controller and will call the JS from a CDN.
+NOTES
+-----
+
+This extension uses KnockoutJS for the page view controller and will call the JS from a CDN.
+
+        <script src="https://unpkg.com/tko/dist/tko.es6.min.js"></script>
+
+The source will need to be allowed in your CSP, if you have one.
 
 Options
 -------
 
 -  ``app``,  Flask application.  Use init_app(app) to initialise later on.
 
+Rules
+-----
+
+A rules dictionary controls how the password is checked and certain aspects of the page operation.
+
+The rules are:
+
+    rules = {'punctuation': 1, 'uppercase': 1, 'lowercase': 1, 'number_sequence': True,
+                      'username': True, 'numbers': 1, 'username_length': 0, 'username_requires_separators': False,
+                      'passwords': True, 'keyboard_sequence': False, 'alphabet_sequence': False, 'flash': True
+                      'long_password_override': 0, 'pwned': True, 'show_hide_passwords': True, 'min_password_length': 20}
+
+* punctuation            - required punctuation in the password (string.punctuation is used).
+* uppercase              - required upper case letters.
+* lowercase              - required lower case letters.
+* number_sequence        - forbid 3 or more numbers in sequence. ie: 123,234,456 etc.
+* username               - forbid the password from containing the user name (if supplied as user).
+* numbers                - required numbers.
+* passwords              - forbid using a password similar to the top 10000 used passwords.
+* keyboard_sequence      - forbid a sequence of 4 or more keyboard letters, ie: qwerty.
+* alphabet_sequence      - forbid a sequence of 4 or more alphabetic ordered letters, ie: abcd.
+* long_password_override - number - when a password is this number times the min length, rules are not enforced.  Set to 0 to disable.  Default is 2
+* pwned                  - dynamically query HIBP list of hacked and released passwords and forbid any hacked password found. see: https://haveibeenpwned.com/API/v2#PwnedPasswords
+* show_hide_passwords    - allow the client to click to show the password on the page
+* min_password_length    - minimum length of the password
+* flash                  - produce Flask flash messages on errors
+
+Use the `update_rules` method to change the rules.
+
+Username creation not yet discussed.
+
+* username_length - minimum length for a username
+* username_requires_separators - username must use . or - inside
+
+
 Methods
 -------
 
+-  ``ChangePassword(app=None, min_password_length=20, rules=None)`` - Create object.
 -  ``init_app(app)`` - Initialise and start with the given Flask application.
 -  ``change_password_template(form, submit_text=None)`` - Format and return a
      fragment of HTML that implements the change/set password form.  form is the
      required password operation form. submit_text is the text to show on the submit
      button.  Default is 'submit'
+-  ``update_rules(rules=None)`` - Modify the current rules by supplying a dictionary of new rules
 
 Adding the form to a page
 -------------------------

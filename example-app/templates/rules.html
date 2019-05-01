@@ -1,24 +1,27 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    <div>
+    <div id="rules">
         <h1>Change Password Rules</h1>
         <h3>Current Rules</h3>
         <p>{{ rules }}</p>
-        <label>punctuation<input type="checkbox" data-bind="checked: punctuation"></label><br>
-        <label>uppercase<input type="checkbox" data-bind="checked: uppercase"></label><br>
-        <label>lowercase<input type="checkbox" data-bind="checked: lowercase"></label><br>
+        <label>min_password_length<input type="number" data-bind="textInput: min_password_length"></label><br>
+        <label>punctuation<input type="number" data-bind="textInput: punctuation"></label><br>
+        <label>uppercase<input type="number" data-bind="textInput: uppercase"></label><br>
+        <label>lowercase<input type="number" data-bind="textInput: lowercase"></label><br>
+        <label>numbers<input type="number" data-bind="textInput: numbers"></label><br>
+
+        <label>long_password_override<input type="number" data-bind="textInput: long_password_override"></label><br>
+        <label>username_length<input type="number" data-bind="textInput: username_length"></label><br>
+
         <label>number_sequence<input type="checkbox" data-bind="checked: number_sequence"></label><br>
         <label>username<input type="checkbox" data-bind="checked: username"></label><br>
-        <label>numbers<input type="checkbox" data-bind="checked: numbers"></label><br>
         <label>passwords<input type="checkbox" data-bind="checked: passwords"></label><br>
         <label>keyboard_sequence<input type="checkbox" data-bind="checked: keyboard_sequence"></label><br>
         <label>alphabet_sequence<input type="checkbox" data-bind="checked: alphabet_sequence"></label><br>
-        <label>long_password_override<input type="number" data-bind="textInput: long_password_override"></label><br>
         <label>pwned<input type="checkbox" data-bind="checked: pwned"></label><br>
-        <label>min_password_length<input type="number" data-bind="textInput: min_password_length"></label><br>
-        <label>username_length<input type="number" data-bind="textInput: username_length"></label><br>
-        <label>show_hide_password<input type="checkbox" data-bind="checked: show_hide_password"></label><br>
+
+        <label>show_hide_passwords<input type="checkbox" data-bind="checked: show_hide_passwords"></label><br>
         <hr>
         <h3>New Rules</h3>
         <p data-bind="text: newRules"></p>

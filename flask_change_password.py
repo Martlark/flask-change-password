@@ -17,10 +17,10 @@ class ChangePassword:
         self.base_dir = os.path.dirname(__file__)
         self.min_password_length = min_password_length
         self.app = None
-        self.rules = {'punctuation': True, 'uppercase': True, 'lowercase': True, 'number_sequence': True,
-                      'username': True, 'numbers': True, 'username_length': 0, 'username_requires_separators': False,
-                      'passwords': True, 'keyboard_sequence': False, 'alphabet_sequence': False,
-                      'long_password_override': 0, 'pwned': True, 'show_hide_passwords': True, 'flash': True}
+        self.rules = {'punctuation': 1, 'uppercase': 1, 'lowercase': 1, 'number_sequence': True,
+                      'username': True, 'numbers': 1, 'username_length': 0, 'username_requires_separators': False,
+                      'passwords': True, 'keyboard_sequence': True, 'alphabet_sequence': True,
+                      'long_password_override': 2, 'pwned': True, 'show_hide_passwords': True, 'flash': True}
         self.update_rules(dict(min_password_length=min_password_length))
         self.update_rules(rules or {})
 
@@ -107,14 +107,14 @@ class ChangePassword:
         rules_text = '''Must be at least {min_password_length} characters long.'''.format(
             min_password_length=self.rules['min_password_length'])
 
-        if self.rules['uppercase']:
-            rules_text += ''' Must include at least one uppercase.'''
-        if self.rules['numbers']:
-            rules_text += ''' Must include at least one number.'''
-        if self.rules['lowercase']:
-            rules_text += ''' Must include at least one lowercase.'''
-        if self.rules['punctuation']:
-            rules_text += ''' Must include at least one punctuation character.'''
+        if self.rules['uppercase'] > 0:
+            rules_text += ''' Must include at least {} uppercase.'''.format(self.rules['uppercase'])
+        if self.rules['numbers'] > 0:
+            rules_text += ''' Must include at least {} number{}.'''.format(self.rules['numbers'], self.plural(self.rules['numbers']))
+        if self.rules['lowercase'] > 0:
+            rules_text += ''' Must include at least {} lowercase.'''.format(self.rules['lowercase'])
+        if self.rules['punctuation'] > 0:
+            rules_text += ''' Must include at least {} punctuation character{}.'''.format(self.rules['punctuation'], self.plural(self.rules['punctuation']))
         if self.rules['username']:
             rules_text += ''' Cannot include your user name.'''
         if self.rules['number_sequence']:
@@ -133,6 +133,18 @@ class ChangePassword:
 
         return rules_text
 
+    @staticmethod
+    def count_characters(password, char_set):
+        found_count = 0
+        for p in password:
+            if p in char_set:
+                found_count += 1
+        return found_count
+
+    @staticmethod
+    def plural(number):
+        return 's' if number > 1 else ''
+
     def password_good_enough(self, password, username=''):
         """
         valid_password if the password is sufficiently secure
@@ -150,26 +162,31 @@ class ChangePassword:
             return 5
 
         # only apply these tests if password is of 'middling length'
-        if self.rules['uppercase'] and not re.search(r'[A-Z]', password):
-            raise Exception('uppercase required')
+        if self.rules['uppercase'] > 0:
+            found_count = self.count_characters(password, string.ascii_letters.upper())
+            if found_count < self.rules['uppercase']:
+                raise Exception('{} uppercase required'.format(self.rules['uppercase']))
         score += 1
 
-        if self.rules['lowercase'] and not re.search(r'[a-z]', password):
-            raise Exception('lowercase required')
+        if self.rules['lowercase'] > 0 and not re.search(r'[a-z]', password):
+            found_count = self.count_characters(password, string.ascii_letters.lower())
+            if found_count < self.rules['lowercase']:
+                raise Exception('{} lowercase required'.format(self.rules['lowercase']))
         score += 1
 
-        if self.rules['numbers'] and not re.search(r'[0-9]', password):
-            raise Exception('numbers required')
+        if self.rules['numbers'] > 0:
+            found_count = self.count_characters(password, string.digits)
+            if found_count < self.rules['numbers']:
+                raise Exception(
+                    '{} number{} required'.format(self.rules['numbers'], self.plural(self.rules['numbers'])))
         score += 1
 
-        if self.rules['punctuation']:
-            punctuation = 0
-            for p in password:
-                if p in string.punctuation:
-                    punctuation += 1
+        if self.rules['punctuation'] > 0:
+            punctuation = self.count_characters(password, string.punctuation)
 
-            if punctuation == 0:
-                raise Exception('punctuation required')
+            if punctuation < self.rules['punctuation']:
+                raise Exception('{} punctuation{} required'.format(self.rules['punctuation'],
+                                                                   self.plural(self.rules['punctuation'])))
         score += 1
 
         if self.rules['username'] and len(username) > 0 and username.lower() in password.lower():

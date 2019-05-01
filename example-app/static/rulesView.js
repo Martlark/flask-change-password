@@ -39,8 +39,8 @@ class RulesViewController {
         this.username_length = ko.observable(rules.username_length);
         this.username_length.subscribe(newValue => this.updateRule('username_length', newValue));
 
-        this.show_hide_password = ko.observable(rules.show_hide_password);
-        this.show_hide_password.subscribe(newValue => this.updateRule('show_hide_password', newValue));
+        this.show_hide_passwords = ko.observable(rules.show_hide_passwords);
+        this.show_hide_passwords.subscribe(newValue => this.updateRule('show_hide_passwords', newValue));
 
         this.newRules = ko.observable('');
         ko.applyBindings(this);

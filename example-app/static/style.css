@@ -6,6 +6,14 @@
     display: inline;
 }
 
+#rules input {
+    margin-left: 1em;
+}
+
+#rules label {
+    padding-left: 2em;
+}
+
 .form {
     margin: 1em;
 }
