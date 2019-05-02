@@ -1,2 +1,2 @@
 flask
-flask-change-password
+flask-change-password>=0.0.6
