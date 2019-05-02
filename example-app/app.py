@@ -13,7 +13,7 @@
 # limitations under the License.
 import json
 import os
-from flask import Flask, render_template, redirect, url_for, jsonify, request
+from flask import Flask, render_template, redirect, url_for, jsonify
 
 from flask_change_password import ChangePassword, ChangePasswordForm, SetPasswordForm
 

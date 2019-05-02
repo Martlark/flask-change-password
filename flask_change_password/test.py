@@ -2,7 +2,7 @@ import unittest
 
 from flask import Flask, render_template_string, request
 
-from flask_change_password import ChangePassword, ChangePasswordForm
+from flask_change_password.flask_change_password import ChangePassword, ChangePasswordForm
 
 
 class AppTestCase(unittest.TestCase):

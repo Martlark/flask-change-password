@@ -59,7 +59,7 @@ setup(
     ],
     keywords='flask change password page',
 
-    packages=['.'],
+    packages=['flask_change_password'],
     include_package_data=True,
     install_requires=['flask>=0.11', 'flask-wtf', 'WTForms', 'requests'],
 )
