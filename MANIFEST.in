@@ -1,2 +1,2 @@
-include flask_change_password/10_million_passwords_list_top_10000.txt flask_change_password/change_password_template.html flask_change_password/pageChangePassword.js
+include flask_change_password/10_million_password_list_top_10000.txt flask_change_password/change_password_template.html flask_change_password/pageChangePassword.js
 
